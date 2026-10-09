@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambiente virtual
+venv/
+.venv/
+env/
+
+# Segredos e configuração local
+.env
+.env.*
+!.env.example
+
+# Dados de conversa gerados localmente
+memory.txt
+
+# Ferramentas de desenvolvimento
+.vscode/
+.idea/
+.pytest_cache/
