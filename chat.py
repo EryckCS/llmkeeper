@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
-from langchain.messages import HumanMessage, AIMessage, SystemMessage
+from langchain.messages import HumanMessage, SystemMessage
+from pathlib import Path
 
 load_dotenv()
 
@@ -20,12 +21,13 @@ def escolher_modelo(escolha):
         print("Digite um número válido")
         return None
 
+
 print("O sistema tem alguns modelos prontos para uso, escolha com base sua api key!\n\n"
-      "[1] gpt-5-mini\n"
-      "[2] google_genai:gemini-2.5-flash\n"
-      "[3] claude-haiku-4-5-20251001\n"
-      "[4] grok-4.3\n"
-      "[5] deepseek-flash\n"
+      "[1] gpt-5-mini: OPENAI\n"
+      "[2] google_genai:gemini-2.5-flash: GOOGLE\n"
+      "[3] claude-haiku-4-5-20251001: ANTHROPIC\n"
+      "[4] grok-4.3: GROK\n"
+      "[5] deepseek-flash: DEEPSEEK\n"
 )
 
 #Prompt inicial para o modelo.
@@ -34,6 +36,16 @@ messages = [
         "caso o usuário não deseje fazer mais perguntas fale para o usuário, digite sair."
         )
 ]
+
+memory_path = Path(__file__).with_name("memory.txt")
+
+if memory_path.exists():
+    memoria = memory_path.read_text(encoding="utf-8").strip()
+
+    if memoria:
+        messages.append(
+            SystemMessage(content=f"Contexto da conversa anterior:\n{memoria}")
+    )
 
 while True:
     try:
@@ -51,9 +63,13 @@ while True:
     human_message = HumanMessage(usuario_input)
 
     if usuario_input.lower().strip() == "sair":
+        filtered_messages = [msg for msg in messages if msg.type != "system"]
+        response = model.invoke(filtered_messages)
         print("Finalizando o chat e guardando o contexto!")
-        with open("memory.txt", "w", encoding="utf-8") as fp:
+        with open("memory.txt", "a", encoding="utf-8") as fp:
             for msg in messages:
+                if msg.type == "system":
+                    continue
                 fp.write(f"{msg.type}: {msg.content}\n\n")
         break
 
