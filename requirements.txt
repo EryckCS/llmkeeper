@@ -1,3 +1,7 @@
 langchain==1.4.3
 langchain-google-genai==4.4.0
+langchain-openai
+langchain-anthropic
+langchain-xai
+langchain-deepseek
 python-dotenv==1.2.4
