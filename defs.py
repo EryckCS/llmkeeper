@@ -3,7 +3,7 @@ import datetime
 from pathlib import Path
 
 def date_conversa():
-    return datetime.datetime.now()
+    return datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 def chamar_modelo(nome_modelo, provider_modelo):
     return init_chat_model(model=nome_modelo,

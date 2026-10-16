@@ -15,17 +15,17 @@ while True:
             
     except (ValueError, ImportError, ModuleNotFoundError) as erro:
         if ValueError:
-            print("erro de valor")
+            print("Erro ValueError, model não encontrado. Verifique se o nome do modelo e o provedor estão corretos.")
         elif ImportError:
-            print("erro de import")
+            print("Erro ImportError, model não encontrado. Verifique se o nome do modelo e o provedor estão corretos.")
         elif ModuleNotFoundError:
-            print("module not found")
+            print("Erro ModuleNotFoundError, model não encontrado. Verifique se o nome do modelo e o provedor estão corretos.")
 
 #Prompt inicial para o modelo.
 messages = [
-    SystemMessage("Você é uma LLM normal. Ao final de cada resposta, diga que, "
-        "caso o usuário não deseje fazer mais perguntas fale para o usuário, digite sair."
-        )
+    SystemMessage("Você é uma LLM normal. Responda as perguntas do usuário de forma clara e objetiva."
+                  "Não invente respostas. Caso não saiba a resposta, diga que não sabe."
+)
 ]
 
 memoria = carregar_memoria()
@@ -36,6 +36,8 @@ if memoria:
 )
 
 #Input do usuário e transformar messages em str para guardar no memory.txt
+
+print("Digite 'sair' para encerrar o chat e guardar o contexto da conversa.")
 while True:
     print(f"{'HUMAN':-^80}")
     usuario_input = input("Digite sua mensagem: ")
