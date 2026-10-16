@@ -1,29 +1,25 @@
 from dotenv import load_dotenv
-from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage, SystemMessage, AIMessage
-from pathlib import Path
-import datetime
+from defs import *
 load_dotenv()
 
-def date_conversa():
-    return datetime.datetime.now()
+while True:
+    print("A seguir digite o nome do seu modelo (model).")
 
-def escolher_modelo(escolha):
-
-    if escolha == 1:
-        return init_chat_model(model="qwen3.5:2b",
-                               model_provider="ollama")
-    elif escolha == 2:
-        return init_chat_model("google_genai:gemini-2.5-flash")
-    elif escolha == 3:
-        return init_chat_model("claude-haiku-4-5-20251001")
-    elif escolha == 4:
-        return init_chat_model("xai:grok-4.7")
-    elif escolha == 5:
-        return init_chat_model("deepseek-flash")
-    else:
-        print("Digite um número válido")
-        return None
+    try:
+        nome_modelo = input("Digite: ")
+        print("A seguir digite o provedor do seu modelo (model_provider).")
+        provider_modelo = input("Digite: ")
+        model = chamar_modelo(nome_modelo, provider_modelo)
+        break
+            
+    except (ValueError, ImportError, ModuleNotFoundError) as erro:
+        if ValueError:
+            print("erro de valor")
+        elif ImportError:
+            print("erro de import")
+        elif ModuleNotFoundError:
+            print("module not found")
 
 #Prompt inicial para o modelo.
 messages = [
@@ -32,41 +28,12 @@ messages = [
         )
 ]
 
-def carregar_memoria():
-
-    memory_path = Path(__file__).with_name("memory.txt")
-    
-    if memory_path.exists():
-        return memory_path.read_text(encoding="utf-8").strip()
-
-
 memoria = carregar_memoria()
 
 if memoria:
     messages.append(
         SystemMessage(content=f"Contexto da conversa anterior:\n{memoria}")
 )
-
-def pedir_modelo():
-    print("O sistema tem alguns modelos prontos para uso, escolha com base sua api key!\n\n"
-    "[1] gpt-5-mini: OPENAI\n"
-    "[2] google_genai:gemini-2.5-flash: GOOGLE\n"
-    "[3] claude-haiku-4-5-20251001: ANTHROPIC\n"
-    "[4] grok-4.3: GROK\n"
-    "[5] deepseek-flash: DEEPSEEK\n"
-)
-
-    while True:
-        try:
-            opcao = int(input("Digite o número da sua escolha: "))
-            model = escolher_modelo(opcao)
-            if model is not None:
-                return model
-        except (ValueError, ImportError, ModuleNotFoundError) as erro:
-            print("Digite apenas número de 1 até 5, ou escolha o modelo válido para chave api que você colocou!")
-
-model = pedir_modelo()
-
 
 #Input do usuário e transformar messages em str para guardar no memory.txt
 while True:
@@ -92,11 +59,13 @@ while True:
                     fp.write(f"{msg.type}: {msg.content}\n\n")                    
         break
 
-    messages.append(HumanMessage([usuario_input, tempohuman.isoformat()]))
+    messages.append(HumanMessage(content=[{"type": "text", "text": usuario_input},
+                                 {"type": "text", "text": tempohuman}]))
     response = model.invoke(messages)
     print(f"{'AI':-^80}")
 
     print("AI: ", response.content)
     tempoai = date_conversa()
     print(f"Time: {tempoai}")
-    messages.append(AIMessage([response.content, tempoai.isoformat()]))
+    messages.append(AIMessage(content=[{"type": "text", "text": response.content},
+                                       {"type": "text", "text": tempoai}]))
