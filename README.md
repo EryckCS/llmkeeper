@@ -1,23 +1,13 @@
 # LLMKeeper
 
-Chat de linha de comando em Python que usa LangChain para conversar com diferentes provedores de IA. O programa permite escolher um modelo ao iniciar e reutiliza o conteúdo de `memory.txt` como contexto de conversas anteriores.
-
-## Modelos disponíveis
-
-| Opção | Provedor | Modelo | Variável de ambiente |
-|---|---|---|---|
-| 1 | OpenAI | `gpt-5-mini` | `OPENAI_API_KEY` |
-| 2 | Google Gemini | `google_genai:gemini-2.5-flash` | `GOOGLE_API_KEY` |
-| 3 | Anthropic | `claude-haiku-4-5-20251001` | `ANTHROPIC_API_KEY` |
-| 4 | xAI | `grok-4.3` | `XAI_API_KEY` |
-| 5 | DeepSeek | `deepseek-flash` | `DEEPSEEK_API_KEY` |
-
-É necessária uma chave válida para o provedor escolhido. As integrações dos provedores estão listadas em `requirements.txt`.
+Chat de linha de comando em Python que usa LangChain para conversar com provedores de modelos de linguagem. Ao iniciar, o programa pede o identificador do modelo e o provedor; não há um menu de modelos predefinidos.
 
 ## Requisitos
 
 - Python 3.10 ou superior
-- Chave de API para pelo menos um dos provedores listados
+- Uma chave de API válida para o provedor escolhido
+
+As integrações instaladas estão listadas em `requirements.txt`: OpenAI, Google Gemini, Anthropic, xAI, DeepSeek e OpenRouter. O identificador do modelo e o nome do provedor devem ser compatíveis com a integração LangChain correspondente.
 
 ## Instalação
 
@@ -43,15 +33,15 @@ Instale as dependências:
 pip install -r requirements.txt
 ```
 
-## Configuração das chaves
+## Configuração
 
-Copie `.envexample` para `.env` na pasta do projeto. No PowerShell:
+O programa carrega variáveis de ambiente com `python-dotenv`. Para configurar as chaves, copie o modelo de variáveis e preencha a chave do provedor que pretende usar. No PowerShell:
 
 ```powershell
 Copy-Item .envexample .env
 ```
 
-Preencha a chave correspondente ao modelo que pretende usar:
+O arquivo `.envexample` lista estas variáveis:
 
 ```dotenv
 OPENAI_API_KEY=sua-chave-openai
@@ -59,26 +49,27 @@ GOOGLE_API_KEY=sua-chave-google
 ANTHROPIC_API_KEY=sua-chave-anthropic
 XAI_API_KEY=sua-chave-xai
 DEEPSEEK_API_KEY=sua-chave-deepseek
+OPENROUTER_API_KEY=sua-chave-openrouter
 ```
 
 Não é necessário preencher todas as chaves. Mantenha `.env` privado e não o publique no GitHub.
 
 ## Como usar
 
-Inicie o chat na pasta do projeto:
+Execute o programa a partir da pasta do projeto:
 
 ```bash
 python chat.py
 ```
 
-Digite o número do modelo desejado e envie mensagens pelo terminal. Digite `sair` para encerrar a sessão.
+Quando solicitado, informe o identificador do modelo e o provedor aceitos pela integração LangChain instalada. Em seguida, envie mensagens pelo terminal. Digite `sair` para encerrar e salvar as mensagens da sessão.
 
-## Histórico
+## Histórico de conversas
 
-No início, se `memory.txt` existir e tiver conteúdo, o programa o inclui como texto de contexto para o modelo. Ao digitar `sair`, as mensagens da sessão atual são acrescentadas ao final do arquivo. Assim, conversas anteriores permanecem registradas e são apresentadas ao modelo em execuções futuras.
+Se houver conteúdo em `memory.txt` na pasta do projeto, ele será carregado como contexto inicial para a conversa. Ao encerrar com `sair`, as mensagens humanas e as respostas da sessão são acrescentadas ao arquivo. O histórico é texto simples e permanece local; apague `memory.txt` para começar sem o contexto salvo.
 
-O histórico é armazenado localmente em texto simples. Apague `memory.txt` para começar sem o contexto salvo.
+Execute `chat.py` a partir da pasta do projeto para que o arquivo de histórico seja lido e gravado no mesmo local.
 
 ## Arquivos locais
 
-O arquivo `.env`, os ambientes virtuais e `memory.txt` são ignorados pelo Git. `requirements.txt` lista as dependências necessárias para executar o projeto.
+O Git ignora `.env`, ambientes virtuais e `memory.txt`. `requirements.txt` contém as dependências do projeto.
